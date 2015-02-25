@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+</head>
+<body>
+
+<div id="container"></div>
+
+<script src="bower_components/threejs/build/three.js"></script>
+<script src="lib/gentilis_bold.typeface.js"></script>
+<script>
+  'use strict';
+  var renderer, scene, camera, group;
+
+  init();
+  animate();
+
+  function init(){
+		// set the scene size
+		// var WIDTH = window.width,
+		//   HEIGHT = 300;
+
+		// // set some camera attributes
+		// var VIEW_ANGLE = 45,
+		//   ASPECT = WIDTH / HEIGHT,
+		//   NEAR = 0.1,
+		//   FAR = 10000;
+
+		// get the DOM element to attach to
+		// - assume we've got jQuery to hand
+		var container = document.querySelector('#container');
+
+		// create a WebGL renderer, camera
+		// and a scene
+		renderer = new THREE.WebGLRenderer();
+		container.appendChild(renderer.domElement);
+
+	  camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
+		camera.position.set( 0, 150, 500 );
+
+		scene = new THREE.Scene();
+
+		var textMaterial = new THREE.MeshBasicMaterial({
+		 color: 0xff3300
+		});
+		var textGeom = new THREE.TextGeometry( 'Sebastian Metzger', {
+				size: 80,
+				height: 20,
+		    font: 'gentilis', // Must be lowercase!
+		    style: 'normal',
+	      weight: 'bold'
+		});
+
+		textGeom.computeBoundingBox();
+		var centerOffset = -0.5 * ( textGeom.boundingBox.max.x - textGeom.boundingBox.min.x );
+
+		var textMesh = new THREE.Mesh( textGeom, textMaterial );
+
+		textMesh.position.x = centerOffset;
+		textMesh.position.y = 100;
+		textMesh.position.z = 0;
+
+		textMesh.rotation.x = 0;
+		textMesh.rotation.y = Math.PI * 2;
+
+		group = new THREE.Group();
+		group.add( textMesh );
+
+		scene.add( group );
+
+		renderer.setClearColor( 0xf0f0f0 );
+		renderer.setSize(window.innerWidth, window.innerHeight);
+
+		// var scene = new THREE.Scene();
+
+		// // add the camera to the scene
+		// scene.add(camera);
+
+		// // the camera starts at 0,0,0
+		// // so pull it back
+		// camera.position.z = 0;
+
+		// // start the renderer
+		// renderer.setSize(WIDTH, HEIGHT);
+
+
+		// var textMaterial = new THREE.MeshPhongMaterial({
+		//   color: 0xdddddd
+		// });
+		// var textGeom = new THREE.TextGeometry( 'Hello World!', {
+		//     font: 'gentilis', // Must be lowercase!
+		//     style: 'normal',
+	 //      weight: 'bold'
+		// });
+		// var textMesh = new THREE.Mesh( textGeom, textMaterial );
+
+		// scene.add( textMesh );
+
+		// var geometry = new THREE.BoxGeometry( 200, 200, 200 );
+
+		// // var texture = THREE.ImageUtils.loadTexture( 'textures/crate.gif' );
+		// // texture.anisotropy = renderer.getMaxAnisotropy();
+
+		// var material = new THREE.MeshBasicMaterial( { color: 0x1f1f1f } );
+
+		// var mesh = new THREE.Mesh( geometry, material );
+
+		// scene.add(mesh);
+
+		// var dirLight = new THREE.DirectionalLight( 0xffffff, 0.125 );
+		// dirLight.position.set( 0, 0, 1 ).normalize();
+		// scene.add( dirLight );
+
+		// // Do some optional calculations. This is only if you need to get the
+		// // width of the generated text
+		// textGeom.computeBoundingBox();
+		// textGeom.textWidth = textGeom.boundingBox.max.x - textGeom.boundingBox.min.x;
+		
+		// // attach the render-supplied DOM element
+
+		// renderer.render(scene, camera);
+  }
+
+  function animate(){
+  	requestAnimationFrame(animate);
+  	renderer.render(scene, camera);
+  }
+
+  document.onmousemove = function(e){
+  	// console.log(e.x);
+  	// console.log(e.y);
+  	// textMesh.position.x = e.x;
+  	// textMesh.position.y = e.y;
+  	console.log((e.x / window.innerWidth) * 360);
+  	var x = e.x - (window.innerWidth / 2)
+  	var y = e.y - (window.innerHeight / 2);
+  	group.rotation.y = (x / window.innerWidth * 10) * Math.PI / 180;
+  	group.rotation.x = (y / window.innerWidth * 10) * Math.PI / 180;
+  }
+</script>
+
+</body>
+</html>

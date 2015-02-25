@@ -1,14 +1,14 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://localhost:8000/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 </head>
-<body>
+<body cz-shortcut-listen="true">
 
-<div id="container"></div>
+<div id="container"><canvas width="1615" height="963" style="width: 1615px; height: 963px;"></canvas></div>
 
-<script src="bower_components/threejs/build/three.js"></script>
-<script src="lib/gentilis_bold.typeface.js"></script>
+<script src="./localhost_files/three.js"></script>
+<script src="./localhost_files/gentilis_bold.typeface.js"></script>
 <script>
   'use strict';
   var renderer, scene, camera, group;
@@ -42,11 +42,8 @@
 		scene = new THREE.Scene();
 
 		var textMaterial = new THREE.MeshLambertMaterial({
-		 color: 0xff3300,
-		 ambient: 0xff3300,
-		 overdraw: 0.5 
+		 color: 0xff3300
 		});
-		// var textMaterial = new THREE.MeshPhongMaterial({ ambient: 0x030303, color: 0xdddddd, specular: 0x009900, shininess: 30, shading: THREE.SmoothShading });
 		var textGeom = new THREE.TextGeometry( 'Sebastian Metzger', {
 				size: 60,
 				height: 2,
@@ -68,9 +65,7 @@
 		textMesh.rotation.y = Math.PI * 2;
 
 		var textMaterialTwo = new THREE.MeshLambertMaterial({
-		 color: 0x000000,
-		 ambient: 0x000000,
-		 overdraw: 0.5 
+		 color: 0x000000
 		});
 		var textGeomTwo = new THREE.TextGeometry( 'It Consulting and Software Development', {
 				size: 20,
@@ -110,15 +105,9 @@
   // //   // directionalLight.position.set(600, 60, 0);
   //   scene.add(directionalLight);
 
-  // 	var light = new THREE.PointLight( 0xff0000, 50, 600 );
-		// light.position.set( 0, 50, 400 );
-		// scene.add( light );
-		var ambientLight = new THREE.AmbientLight( 0x404040, 0.1 ); // soft white light
-		scene.add( ambientLight );
-
-		var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-		directionalLight.position.set( 0, 1, 20 );
-		scene.add( directionalLight );
+  	var light = new THREE.PointLight( 0xff0000, 100, 1000 );
+		light.position.set( 0, 50, 500 );
+		scene.add( light );
 
 		renderer.setClearColor( 0xf0f0f0 );
 		renderer.setSize(window.innerWidth, window.innerHeight);
@@ -191,5 +180,5 @@
   }
 </script>
 
-</body>
-</html>
+
+</body></html>

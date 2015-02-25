@@ -3,192 +3,195 @@
 <head>
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
 </head>
-<body>
+<body style="background-image: url('img/background.png')">
 
 <div id="container"></div>
 
 <script src="bower_components/threejs/build/three.js"></script>
 <script src="lib/gentilis_bold.typeface.js"></script>
 <script>
-  'use strict';
-  var renderer, scene, camera, group;
+	(function(){
+	 	'use strict';
+	  var renderer, scene, camera, group, menuItemsGroup, selectedMenuItemIndex;
+	  var menuItems = [];
 
-  init();
-  animate();
+	  init();
+	  initMenu();
+	  animate();
 
-  function init(){
-		// set the scene size
-		// var WIDTH = window.width,
-		//   HEIGHT = 300;
+	  function init(){
+			var container = document.querySelector('#container');
 
-		// // set some camera attributes
-		// var VIEW_ANGLE = 45,
-		//   ASPECT = WIDTH / HEIGHT,
-		//   NEAR = 0.1,
-		//   FAR = 10000;
+			renderer = new THREE.WebGLRenderer({alpha: true});
+			container.appendChild(renderer.domElement);
 
-		// get the DOM element to attach to
-		// - assume we've got jQuery to hand
-		var container = document.querySelector('#container');
+		  camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
+			camera.position.set( 0, 50, 500 );
 
-		// create a WebGL renderer, camera
-		// and a scene
-		renderer = new THREE.WebGLRenderer();
-		container.appendChild(renderer.domElement);
+			scene = new THREE.Scene();
 
-	  camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
-		camera.position.set( 0, 50, 500 );
+			var textMaterial = new THREE.MeshLambertMaterial({
+			 color: 0xff3300,
+			 ambient: 0xff3300,
+			 overdraw: 0.5 
+			});
 
-		scene = new THREE.Scene();
+			var textGeom = new THREE.TextGeometry( 'Sebastian Metzger', {
+					size: 60,
+					height: 2,
+			    font: 'gentilis', // Must be lowercase!
+			    style: 'normal',
+		      weight: 'bold'
+			});
 
-		var textMaterial = new THREE.MeshLambertMaterial({
-		 color: 0xff3300,
-		 ambient: 0xff3300,
-		 overdraw: 0.5 
-		});
-		// var textMaterial = new THREE.MeshPhongMaterial({ ambient: 0x030303, color: 0xdddddd, specular: 0x009900, shininess: 30, shading: THREE.SmoothShading });
-		var textGeom = new THREE.TextGeometry( 'Sebastian Metzger', {
-				size: 60,
-				height: 2,
-		    font: 'gentilis', // Must be lowercase!
-		    style: 'normal',
-	      weight: 'bold'
-		});
+			textGeom.computeBoundingBox();
+			var centerOffset = -0.5 * ( textGeom.boundingBox.max.x - textGeom.boundingBox.min.x );
 
-		textGeom.computeBoundingBox();
-		var centerOffset = -0.5 * ( textGeom.boundingBox.max.x - textGeom.boundingBox.min.x );
+			var textMesh = new THREE.Mesh( textGeom, textMaterial );
 
-		var textMesh = new THREE.Mesh( textGeom, textMaterial );
+			textMesh.position.x = centerOffset;
+			textMesh.position.y = 50;
+			textMesh.position.z = 0;
 
-		textMesh.position.x = centerOffset;
-		textMesh.position.y = 50;
-		textMesh.position.z = 0;
+			textMesh.rotation.x = 0;
+			textMesh.rotation.y = Math.PI * 2;
 
-		textMesh.rotation.x = 0;
-		textMesh.rotation.y = Math.PI * 2;
+			var textMaterialTwo = new THREE.MeshLambertMaterial({
+			 color: 0xffffff,
+			 ambient: 0xffffff,
+			 overdraw: 0.5 
+			});
+			var textGeomTwo = new THREE.TextGeometry( 'It Consulting and Software Development', {
+					size: 20,
+					height: 2,
+			    font: 'gentilis', // Must be lowercase!
+			    style: 'normal',
+		      weight: 'bold'
+			});
 
-		var textMaterialTwo = new THREE.MeshLambertMaterial({
-		 color: 0x000000,
-		 ambient: 0x000000,
-		 overdraw: 0.5 
-		});
-		var textGeomTwo = new THREE.TextGeometry( 'It Consulting and Software Development', {
-				size: 20,
-				height: 2,
-		    font: 'gentilis', // Must be lowercase!
-		    style: 'normal',
-	      weight: 'bold'
-		});
+			textGeomTwo.computeBoundingBox();
+			var centerOffset = -0.5 * ( textGeomTwo.boundingBox.max.x - textGeomTwo.boundingBox.min.x );
 
-		textGeomTwo.computeBoundingBox();
-		var centerOffset = -0.5 * ( textGeomTwo.boundingBox.max.x - textGeomTwo.boundingBox.min.x );
+			var textMeshTwo = new THREE.Mesh( textGeomTwo, textMaterialTwo );
 
-		var textMeshTwo = new THREE.Mesh( textGeomTwo, textMaterialTwo );
+			textMeshTwo.position.x = centerOffset;
+			textMeshTwo.position.y = 5;
+			textMeshTwo.position.z = 0;
 
-		textMeshTwo.position.x = centerOffset;
-		textMeshTwo.position.y = 5;
-		textMeshTwo.position.z = 0;
+			textMeshTwo.rotation.x = 0;
+			textMeshTwo.rotation.y = Math.PI * 2;
 
-		textMeshTwo.rotation.x = 0;
-		textMeshTwo.rotation.y = Math.PI * 2;
+			group = new THREE.Group();
 
-		group = new THREE.Group();
+			group.position.y = 240;
 
-		group.position.y = 240;
+			group.add( textMesh );
+			group.add( textMeshTwo );
 
-		group.add( textMesh );
-		group.add( textMeshTwo );
+			scene.add( group );
 
-		scene.add( group );
+			var ambientLight = new THREE.AmbientLight( 0x404040, 0.1 ); // soft white light
+			scene.add( ambientLight );
 
-		// add subtle blue ambient lighting
-    // var ambientLight = new THREE.AmbientLight(0x000044);
-    // scene.add(ambientLight);
+			var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+			directionalLight.position.set( 0, 1, 20 );
+			scene.add( directionalLight );
 
-		// var directionalLight = new THREE.HemisphereLight(0xffffff,0xffffff, 0.9);
-  // //   // directionalLight.position.set(0, 100, 0).normalize();
-  // //   // directionalLight.position.set(600, 60, 0);
-  //   scene.add(directionalLight);
+			// renderer.setClearColor( 0xf0f0f0 );
+			renderer.setClearColor( 0x000000, 0 );
+			renderer.setSize(window.innerWidth, window.innerHeight);
+	  }
 
-  // 	var light = new THREE.PointLight( 0xff0000, 50, 600 );
-		// light.position.set( 0, 50, 400 );
-		// scene.add( light );
-		var ambientLight = new THREE.AmbientLight( 0x404040, 0.1 ); // soft white light
-		scene.add( ambientLight );
+	  function initMenu(){
+	  	var menuItemLabels = ["Blog", "Portfolio", "Contact", "About"];
 
-		var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-		directionalLight.position.set( 0, 1, 20 );
-		scene.add( directionalLight );
+	  	menuItemsGroup = new THREE.Group();
 
-		renderer.setClearColor( 0xf0f0f0 );
-		renderer.setSize(window.innerWidth, window.innerHeight);
+	  	var offset = 0;
+	  	menuItemLabels.reverse().forEach(function(item){
+	  		var textMaterial = new THREE.MeshLambertMaterial({
+				 color: 0xffffff,
+				 ambient: 0xffffff,
+				 overdraw: 0.5 
+				});
 
-		// var scene = new THREE.Scene();
+				var textGeom = new THREE.TextGeometry(item, {
+						size: 20,
+						height: 2,
+				    font: 'gentilis', // Must be lowercase!
+				    style: 'normal',
+			      weight: 'bold'
+				});
 
-		// // add the camera to the scene
-		// scene.add(camera);
+				textGeom.computeBoundingBox();
+				var centerOffset = -0.5 * ( textGeom.boundingBox.max.x - textGeom.boundingBox.min.x );
 
-		// // the camera starts at 0,0,0
-		// // so pull it back
-		// camera.position.z = 0;
+				var textMesh = new THREE.Mesh( textGeom, textMaterial );
 
-		// // start the renderer
-		// renderer.setSize(WIDTH, HEIGHT);
+				textMesh.position.x = centerOffset;
+				textMesh.position.y = offset;
+				textMesh.position.z = 0;
 
+				offset += 50;
 
-		// var textMaterial = new THREE.MeshPhongMaterial({
-		//   color: 0xdddddd
-		// });
-		// var textGeom = new THREE.TextGeometry( 'Hello World!', {
-		//     font: 'gentilis', // Must be lowercase!
-		//     style: 'normal',
-	 //      weight: 'bold'
-		// });
-		// var textMesh = new THREE.Mesh( textGeom, textMaterial );
+				textMesh.rotation.x = 0;
+				textMesh.rotation.y = Math.PI * 2;
 
-		// scene.add( textMesh );
+				menuItems.push(textMesh);
 
-		// var geometry = new THREE.BoxGeometry( 200, 200, 200 );
+				menuItemsGroup.add(textMesh);
+	  	});
 
-		// // var texture = THREE.ImageUtils.loadTexture( 'textures/crate.gif' );
-		// // texture.anisotropy = renderer.getMaxAnisotropy();
+	  	selectedMenuItemIndex = menuItemLabels.length-1;
+	  	scene.add(menuItemsGroup);
+	  }
 
-		// var material = new THREE.MeshBasicMaterial( { color: 0x1f1f1f } );
+	  var comeTowards = true;
+	  function animate(){
+	  	if(menuItems[selectedMenuItemIndex].position.z < 0){
+	  		comeTowards = true;
+	  	} else if (menuItems[selectedMenuItemIndex].position.z > 40) {
+	  		comeTowards = false;
+	  	}
 
-		// var mesh = new THREE.Mesh( geometry, material );
+	  	if(comeTowards){
+	  		menuItems[selectedMenuItemIndex].position.z += 2;
+	  	} else {
+	  		menuItems[selectedMenuItemIndex].position.z -= 2;
+	  	}
+	  	
+	  	requestAnimationFrame(animate);
+	  	renderer.render(scene, camera);
+	  }
 
-		// scene.add(mesh);
+	  document.onmousemove = function(e){
+	  	// console.log(e.x);
+	  	// console.log(e.y);
+	  	// textMesh.position.x = e.x;
+	  	// textMesh.position.y = e.y;
+	  	// console.log((e.x / window.innerWidth) * 360);
+	  	var x = e.x - (window.innerWidth / 2)
+	  	var y = e.y - ((window.innerHeight - 240) / 2) ;
+	  	group.rotation.y = (x / window.innerWidth * 10) * Math.PI / 180;
+	  	group.rotation.x = (y / window.innerWidth * 10) * Math.PI / 180;
+	  };
 
-		// var dirLight = new THREE.DirectionalLight( 0xffffff, 0.125 );
-		// dirLight.position.set( 0, 0, 1 ).normalize();
-		// scene.add( dirLight );
-
-		// // Do some optional calculations. This is only if you need to get the
-		// // width of the generated text
-		// textGeom.computeBoundingBox();
-		// textGeom.textWidth = textGeom.boundingBox.max.x - textGeom.boundingBox.min.x;
-		
-		// // attach the render-supplied DOM element
-
-		// renderer.render(scene, camera);
-  }
-
-  function animate(){
-  	requestAnimationFrame(animate);
-  	renderer.render(scene, camera);
-  }
-
-  document.onmousemove = function(e){
-  	// console.log(e.x);
-  	// console.log(e.y);
-  	// textMesh.position.x = e.x;
-  	// textMesh.position.y = e.y;
-  	console.log((e.x / window.innerWidth) * 360);
-  	var x = e.x - (window.innerWidth / 2)
-  	var y = e.y - ((window.innerHeight - 240) / 2) ;
-  	group.rotation.y = (x / window.innerWidth * 10) * Math.PI / 180;
-  	group.rotation.x = (y / window.innerWidth * 10) * Math.PI / 180;
-  }
+	  document.onkeydown = function(e){
+	  	if("Up" === e.keyIdentifier){
+	  		selectedMenuItemIndex += 1;
+	  		if(selectedMenuItemIndex >= menuItems.length){
+	  			selectedMenuItemIndex = 0;
+	  		}
+	  		e.preventDefault();
+	  	} else if("Down" === e.keyIdentifier){
+	  		selectedMenuItemIndex -= 1;
+	  		if(selectedMenuItemIndex < 0){
+	  			selectedMenuItemIndex = menuItems.length -1;
+	  		}
+	  		e.preventDefault();
+	  	}
+	  };
+  })();
 </script>
 
 </body>

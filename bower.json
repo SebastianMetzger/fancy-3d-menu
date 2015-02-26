@@ -16,6 +16,7 @@
     "tests"
   ],
   "dependencies": {
-    "threejs": "*"
+    "threejs": "*",
+    "threex.domevents": "git@github.com:dezmaeth/threex.domevents.git"
   }
 }

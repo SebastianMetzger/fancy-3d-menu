@@ -8,6 +8,7 @@
 <div id="container"></div>
 
 <script src="bower_components/threejs/build/three.js"></script>
+<script src="bower_components/threex.domevents/threex.domevents.js"></script>
 <script src="lib/gentilis_bold.typeface.js"></script>
 <script>
 	(function(){
@@ -104,11 +105,12 @@
 
 	  function initMenu(){
 	  	var menuItemLabels = ["Blog", "Portfolio", "Contact", "About"];
+	  	var domEvents   = new THREEx.DomEvents(camera, renderer.domElement)
 
 	  	menuItemsGroup = new THREE.Group();
 
 	  	var offset = 0;
-	  	menuItemLabels.reverse().forEach(function(item){
+	  	menuItemLabels.reverse().forEach(function(item, index){
 	  		var textMaterial = new THREE.MeshLambertMaterial({
 				 color: 0xffffff,
 				 ambient: 0xffffff,
@@ -138,6 +140,10 @@
 				textMesh.rotation.y = Math.PI * 2;
 
 				menuItems.push(textMesh);
+
+				domEvents.addEventListener(textMesh, 'click', function(event){
+					selectedMenuItemIndex = index;
+				}, false);
 
 				menuItemsGroup.add(textMesh);
 	  	});

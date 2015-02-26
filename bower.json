@@ -1,0 +1,21 @@
+{
+  "name": "fancy-3d-menu",
+  "version": "0.0.1",
+  "homepage": "https://github.com/SebastianMetzger/fancy-3d-menu",
+  "description": "A fancy three.js menu for my personal website",
+  "main": "index.html",
+  "authors": [
+    "Sebastian Metzger"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "threejs": "*"
+  }
+}
